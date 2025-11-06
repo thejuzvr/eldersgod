@@ -163,9 +163,9 @@
 				<a href="/game/wiki" class="text-sm text-accent-primary hover:text-accent-secondary underline block text-center">
 					📖 Памятка креативщику
 				</a>
-				<a href="#" class="text-sm text-accent-primary hover:text-accent-secondary underline block text-center">
+				<button type="button" class="text-sm text-accent-primary hover:text-accent-secondary underline block text-center w-full">
 					📝 Переменные (для разработчиков)
-				</a>
+				</button>
 				<a href="/game" class="text-sm text-text-muted hover:text-text-secondary underline block text-center">
 					← Вернуться к игре
 				</a>

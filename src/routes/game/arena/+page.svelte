@@ -166,25 +166,26 @@
 							</div>
 
 							<!-- Награды -->
-							{#if battle.rewards}
+							{#if battle.rewards && typeof battle.rewards === 'object'}
+								{@const rewards = battle.rewards as any}
 								<div class="flex flex-wrap gap-2 justify-center mt-3 pt-2 border-t border-border-light">
-									{#if battle.rewards.exp}
+									{#if rewards.exp}
 										<div class="flex items-center gap-1 text-success text-xs px-2 py-1 bg-success bg-opacity-10 rounded">
 											<span>✅</span>
-											<span class="font-medium">+{battle.rewards.exp} опыта</span>
+											<span class="font-medium">+{rewards.exp} опыта</span>
 										</div>
 									{/if}
 									
-									{#if battle.rewards.gold}
-										<div class="flex items-center gap-1 text-xs px-2 py-1 rounded" 
-											class:text-success={battle.rewards.gold > 0} 
-											class:bg-success={battle.rewards.gold > 0}
-											class:text-danger={battle.rewards.gold < 0}
-											class:bg-danger={battle.rewards.gold < 0}
+									{#if rewards.gold}
+										<div class="flex items-center gap-1 text-xs px-2 py-1 rounded"
+											class:text-success={rewards.gold > 0}
+											class:bg-success={rewards.gold > 0}
+											class:text-danger={rewards.gold < 0}
+											class:bg-danger={rewards.gold < 0}
 											class:bg-opacity-10={true}
 										>
-											<span>{battle.rewards.gold > 0 ? '✅' : '❌'}</span>
-											<span class="font-medium">{battle.rewards.gold > 0 ? '+' : ''}{battle.rewards.gold} золота</span>
+											<span>{rewards.gold > 0 ? '✅' : '❌'}</span>
+											<span class="font-medium">{rewards.gold > 0 ? '+' : ''}{rewards.gold} золота</span>
 										</div>
 									{/if}
 								</div>

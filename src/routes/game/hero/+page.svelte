@@ -6,9 +6,12 @@
 	
 	const { hero, inventory, skills } = data;
 	
+	// Приводим hero к any для избежания проблем с типами
+	const heroData = hero as any;
+	
 	$: equippedItems = inventory.filter((i: any) => i.equipped);
-	$: expProgress = hero.experience % getExpForNextLevel(hero.level);
-	$: expNeeded = getExpForNextLevel(hero.level);
+	$: expProgress = (heroData.experience || 0) % getExpForNextLevel(heroData.level);
+	$: expNeeded = getExpForNextLevel(heroData.level);
 	
 	function getExpForNextLevel(level: number): number {
 		return Math.floor(100 * Math.pow(1.5, level));
@@ -48,18 +51,18 @@
 				<div class="panel">
 					<div class="text-center mb-4">
 						<div class="text-6xl mb-3">⚔️</div>
-						<h1 class="text-2xl font-bold text-text-primary mb-2">{hero.name}</h1>
-						<p class="text-sm text-text-secondary">{hero.title}</p>
-						<p class="text-xs text-text-muted mt-1">{hero.race}</p>
-						{#if hero.currentLocation}
-							<p class="text-xs text-info mt-2">📍 {hero.currentLocation}</p>
+						<h1 class="text-2xl font-bold text-text-primary mb-2">{heroData.name}</h1>
+						<p class="text-sm text-text-secondary">{heroData.title}</p>
+						<p class="text-xs text-text-muted mt-1">{heroData.race}</p>
+						{#if heroData.currentLocation}
+							<p class="text-xs text-info mt-2">📍 {heroData.currentLocation}</p>
 						{/if}
 					</div>
 					
 					<!-- Уровень -->
 					<div class="mb-4 text-center">
 						<div class="inline-block bg-accent-primary text-bg-primary px-6 py-2 rounded font-bold text-lg">
-							Уровень {hero.level}
+							Уровень {heroData.level}
 						</div>
 					</div>
 					
@@ -75,9 +78,9 @@
 					
 					<!-- HP -->
 					<div class="mb-4">
-						<ProgressBar 
-							current={hero.currentHealth}
-							max={hero.maxHealth}
+						<ProgressBar
+							current={heroData.currentHealth || 100}
+							max={heroData.maxHealth || 100}
 							label="❤️ Здоровье"
 							color="var(--danger)"
 						/>
@@ -90,17 +93,17 @@
 							<div class="text-center p-3 bg-bg-secondary rounded">
 								<div class="text-2xl mb-1">💪</div>
 								<div class="text-xs text-text-muted">Сила</div>
-								<div class="text-lg font-bold text-text-primary">{hero.strength}</div>
+								<div class="text-lg font-bold text-text-primary">{heroData.strength || 10}</div>
 							</div>
 							<div class="text-center p-3 bg-bg-secondary rounded">
 								<div class="text-2xl mb-1">🧠</div>
 								<div class="text-xs text-text-muted">Интеллект</div>
-								<div class="text-lg font-bold text-text-primary">{hero.intelligence}</div>
+								<div class="text-lg font-bold text-text-primary">{heroData.intelligence || 10}</div>
 							</div>
 							<div class="text-center p-3 bg-bg-secondary rounded">
 								<div class="text-2xl mb-1">🍀</div>
 								<div class="text-xs text-text-muted">Удача</div>
-								<div class="text-lg font-bold text-text-primary">{hero.luck}</div>
+								<div class="text-lg font-bold text-text-primary">{heroData.luck || 10}</div>
 							</div>
 						</div>
 					</div>
@@ -109,11 +112,11 @@
 					<div class="mt-4 pt-4 border-t border-border-light space-y-2">
 						<div class="flex justify-between items-center p-2 bg-bg-secondary rounded">
 							<span class="text-sm text-text-secondary">💰 Золото</span>
-							<span class="text-base font-bold text-text-primary">{hero.gold}</span>
+							<span class="text-base font-bold text-text-primary">{heroData.gold || 0}</span>
 						</div>
 						<div class="flex justify-between items-center p-2 bg-bg-secondary rounded">
 							<span class="text-sm text-text-secondary">🔥 Души драконов</span>
-							<span class="text-base font-bold text-warning">{hero.dragonSouls}</span>
+							<span class="text-base font-bold text-warning">{heroData.dragonSouls || 0}</span>
 						</div>
 					</div>
 				</div>

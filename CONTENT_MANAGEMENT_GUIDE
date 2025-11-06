@@ -1,0 +1,382 @@
+# 📚 Руководство по использованию системы управления контентом
+
+## 🚀 Быстрый старт
+
+### 1. Применение миграций
+
+```bash
+# Применить миграцию БД
+npm run db:push
+
+# Или использовать SQL файл напрямую
+psql -U postgres -d eldersgod -f migrations/20251106_add_content_management_system.sql
+```
+
+### 2. Миграция существующих данных
+
+```bash
+# Запустить скрипт миграции
+npm run migrate:content
+
+# Или вручную
+node scripts/migrate-content.ts
+```
+
+### 3. Доступ к админ-панели
+
+Откройте в браузере: `http://localhost:5173/admin/content`
+
+## 📖 Использование API
+
+### Получить список контента
+
+```typescript
+// GET /api/content?type=title&limit=20&sortBy=name&sortOrder=asc
+const response = await fetch('/api/content?type=title&limit=20');
+const { data } = await response.json();
+console.log(data.items); // Массив титулов
+```
+
+### Создать новый контент
+
+```typescript
+// POST /api/content
+const newTitle = {
+    type: 'title',
+    name: 'Великий Герой',
+    category: 'heroic',
+    weight: 5,
+    icon: '👑',
+    tags: ['hero', 'legendary'],
+    data: {
+        description: 'Титул для великих героев',
+        prestige: 8
+    }
+};
+
+const response = await fetch('/api/content', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(newTitle)
+});
+```
+
+### Обновить контент
+
+```typescript
+// PUT /api/content/[id]
+const updates = {
+    name: 'Обновленное название',
+    weight: 10
+};
+
+await fetch(`/api/content/${contentId}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(updates)
+});
+```
+
+### Удалить контент
+
+```typescript
+// DELETE /api/content/[id]
+await fetch(`/api/content/${contentId}`, {
+    method: 'DELETE'
+});
+```
+
+## 🎮 Использование в игре
+
+### Получить случайный титул
+
+```typescript
+import { ContentService } from '$lib/services/contentService';
+
+// Простой случайный титул
+const title = await ContentService.getRandomTitle();
+
+// С учетом уровня
+const title = await ContentService.getRandomTitle(10);
+```
+
+### Получить случайную мысль
+
+```typescript
+// Любая мысль
+const thought = await ContentService.getRandomThought();
+
+// Мысль определенной категории
+const combatThought = await ContentService.getRandomThought('combat');
+```
+
+### Получить случайный предмет
+
+```typescript
+// Любой предмет
+const item = await ContentService.getRandomItem();
+
+// Предмет определенной редкости
+const legendaryItem = await ContentService.getRandomItem('legendary');
+```
+
+## 🔧 Структура данных
+
+### Титул (Title)
+
+```typescript
+{
+    type: 'title',
+    name: 'Лорд Сырный Ус',
+    category: 'noble',
+    weight: 8,
+    icon: '👑',
+    tags: ['title', 'noble'],
+    unlockLevel: 5,
+    data: {
+        description: 'Благородный титул',
+        prestige: 8
+    }
+}
+```
+
+### Мысль (Thought)
+
+```typescript
+{
+    type: 'thought',
+    text: 'О, Великий! Это была странная неделя...',
+    category: 'general',
+    weight: 1,
+    icon: '💭',
+    tags: ['thought', 'general'],
+    data: {
+        mood: 'neutral',
+        context: 'general'
+    }
+}
+```
+
+### Предмет (Item)
+
+```typescript
+{
+    type: 'item',
+    name: 'Носок-телепорт',
+    category: 'combat',
+    rarity: 'absurd',
+    weight: 12,
+    icon: '🧦',
+    tags: ['item', 'weapon', 'absurd'],
+    data: {
+        type: 'weapon',
+        description: 'Телепортирует врагов в прошлое',
+        stats: {
+            strength: 5,
+            luck: 10
+        },
+        price: 500
+    }
+}
+```
+
+## 📊 Аналитика
+
+### Получить статистику
+
+```typescript
+const stats = await ContentService.getContentStats();
+
+console.log(stats.total); // Всего элементов
+console.log(stats.byType); // Распределение по типам
+console.log(stats.topUsed); // Самый используемый контент
+```
+
+### Отследить использование
+
+```typescript
+// Автоматически увеличивает счетчик использования
+await ContentService.trackUsage(contentId);
+```
+
+## 🎨 Админ-панель
+
+### Основные функции
+
+1. **Просмотр контента** - Таблица со всем контентом
+2. **Фильтрация** - По типу, категории, редкости
+3. **Создание** - Форма для нового контента
+4. **Редактирование** - Изменение существующего
+5. **Удаление** - Мягкое удаление (деактивация)
+6. **Статистика** - Графики и метрики
+
+### Фильтры
+
+- **Весь контент** - Показать все типы
+- **Титулы** - Только титулы
+- **Мысли** - Только мысли героя
+- **Предметы** - Оружие, броня, артефакты
+- **Существа** - Враги и NPC
+- **Локации** - Места в игре
+- **Действия** - Глаголы для событий
+
+## 🔐 Безопасность
+
+### Авторизация
+
+Все операции создания/изменения/удаления требуют авторизации:
+
+```typescript
+// Проверка в API endpoint
+const authData = await getUserFromCookie({ cookies } as any);
+if (!authData) {
+    return json({ error: 'Unauthorized' }, { status: 401 });
+}
+```
+
+### Валидация
+
+Все данные валидируются через Zod схемы:
+
+```typescript
+import { validateContentByType } from '$lib/utils/contentValidators';
+
+const result = validateContentByType(content, 'title');
+if (!result.success) {
+    console.error(result.error);
+}
+```
+
+## 🎯 Лучшие практики
+
+### 1. Используйте правильные веса
+
+- `1-3` - Обычный контент
+- `4-6` - Редкий контент
+- `7-9` - Эпический контент
+- `10+` - Легендарный/абсурдный контент
+
+### 2. Добавляйте теги
+
+Теги помогают в поиске и фильтрации:
+
+```typescript
+tags: ['combat', 'dragon', 'epic', 'skyrim']
+```
+
+### 3. Используйте категории
+
+Категории группируют похожий контент:
+
+```typescript
+// Для титулов
+category: 'noble' | 'heroic' | 'professional' | 'mystical'
+
+// Для мыслей
+category: 'combat' | 'philosophical' | 'absurd' | 'idle'
+```
+
+### 4. Устанавливайте уровни разблокировки
+
+```typescript
+unlockLevel: 10 // Доступен с 10 уровня
+```
+
+## 🐛 Отладка
+
+### Проверка типов
+
+```bash
+npm run check
+```
+
+### Просмотр БД
+
+```bash
+npm run db:studio
+```
+
+### Логи
+
+Все операции логируются в консоль:
+
+```typescript
+console.log('Content created:', newContent);
+console.log('Cache invalidated for type:', type);
+```
+
+## 📝 Примеры использования
+
+### Добавить новый титул через админку
+
+1. Откройте `/admin/content`
+2. Нажмите "Создать контент"
+3. Выберите тип "Титул"
+4. Заполните форму
+5. Нажмите "Создать"
+
+### Программное создание контента
+
+```typescript
+import { ContentService } from '$lib/services/contentService';
+
+const newCreature = await ContentService.createContent({
+    type: 'creature',
+    name: 'Дракон-пекарь',
+    category: 'dragon',
+    rarity: 'epic',
+    weight: 8,
+    icon: '🐉',
+    tags: ['dragon', 'friendly', 'baker'],
+    data: {
+        description: 'Дракон, который печет кексы',
+        category: 'dragon',
+        behavior: 'peaceful',
+        health: 200,
+        strength: 15,
+        intelligence: 20
+    }
+});
+```
+
+## 🔄 Обновление контента
+
+### Массовое обновление
+
+```typescript
+// Получить весь контент типа
+const titles = await ContentService.loadContent('title');
+
+// Обновить каждый элемент
+for (const title of titles.items) {
+    await ContentService.updateContent(title.id, {
+        weight: title.weight * 1.5 // Увеличить вес на 50%
+    });
+}
+```
+
+## 📈 Мониторинг
+
+### Просмотр статистики
+
+```typescript
+const stats = await ContentService.getContentStats();
+
+console.log(`Всего контента: ${stats.total}`);
+console.log(`Активного: ${stats.active}`);
+console.log(`Средний вес: ${stats.avgWeight}`);
+console.log('По типам:', stats.byType);
+```
+
+### Топ контента
+
+```typescript
+const stats = await ContentService.getContentStats();
+
+console.log('Самый используемый:', stats.topUsed);
+console.log('Самый оцененный:', stats.topRated);
+```
+
+---
+
+**Система готова к использованию!** 🎉

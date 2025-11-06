@@ -55,7 +55,7 @@ const eventTemplates = {
 				
 				return {
 					type: 'combat' as const,
-					category: 'in_combat' as EventCategory,
+					category: 'in_combat' as const,
 					title: `Битва с ${creature.name}`,
 					description: `${hero.name} ${action} ${creature.name} в ${location.name}! После эпической битвы герой победил и получил ${item.name}!`,
 					thought: getRandomThought('combat'),
@@ -77,6 +77,7 @@ const eventTemplates = {
 				
 				return {
 					type: 'combat' as const,
+					category: 'in_combat' as const,
 					title: `Поражение от ${creature.name}`,
 					description: `${creature.name} оказался сильнее! ${hero.name} героически отступил, потеряв немного достоинства и золота.`,
 					thought: getRandomThought('failure'),
@@ -97,6 +98,7 @@ const eventTemplates = {
 				
 				return {
 					type: 'combat' as const,
+					category: 'in_combat' as const,
 					title: `Кекс-дракон атакует!`,
 					description: `В ${location.name} появился Кекс-дракон! ${hero.name} сразился с ним, используя силу абсурда. Кекс повержен! Теперь у героя есть Джемная душа!`,
 					thought: `О Великий! Этот кекс кричал: "Я — король крема!" и плюётся вишнёвым джемом!`,
@@ -118,6 +120,7 @@ const eventTemplates = {
 				
 				return {
 					type: 'combat' as const,
+					category: 'in_combat' as const,
 					title: `Агрессивный хлеб!`,
 					description: `${hero.name} встретил агрессивный хлеб! Битва была жестокой. Герой победил, но теперь боится пекарен.`,
 					thought: 'Хлеб... живой... Мир никогда не будет прежним.',
@@ -141,6 +144,7 @@ const eventTemplates = {
 				
 				return {
 					type: 'exploration' as const,
+					category: 'exploration' as const,
 					title: `Исследование ${location.name}`,
 					description: `${hero.name} исследовал ${location.name}. ${location.description} В пути герой нашёл ${item.name}!`,
 					thought: getRandomThought('discovery'),
@@ -160,6 +164,7 @@ const eventTemplates = {
 				
 				return {
 					type: 'exploration' as const,
+					category: 'exploration' as const,
 					title: `Упал в колодец`,
 					description: `${hero.name} упал в колодец в ${location.name}, но обнаружил там дракона-пчеловода! Теперь герой носит медовый шлем и кричит: "Спасибо, Великий!"`,
 					thought: 'О Великий! Дракон в колодце делает мёд! Логично!',
@@ -179,6 +184,7 @@ const eventTemplates = {
 				
 				return {
 					type: 'exploration' as const,
+					category: 'exploration' as const,
 					title: `Пещера говорящих камней`,
 					description: `В ${location.name} ${hero.name} нашёл пещеру с говорящими камнями. Они дали советы... бесполезные, но искренние!`,
 					thought: getRandomThought('philosophical'),
@@ -196,6 +202,7 @@ const eventTemplates = {
 			generate: (hero: any) => {
 				return {
 					type: 'exploration' as const,
+					category: 'exploration' as const,
 					title: `Лестница с характером`,
 					description: `${hero.name} встретил лестницу с характером. Лестница была груба, толкнула героя, но потом извинилась и подарила золотой зуб!`,
 					thought: 'Лестница... извинилась... Я видел всё.',
@@ -215,6 +222,7 @@ const eventTemplates = {
 				
 				return {
 					type: 'exploration' as const,
+					category: 'exploration' as const,
 					title: `Таверна найдена!`,
 					description: `${hero.name} нашёл таверну "${location.name}"! Сладкие рулеты, эль и странные истории - что ещё нужно герою?`,
 					thought: getRandomThought('food'),
@@ -238,6 +246,7 @@ const eventTemplates = {
 				
 				return {
 					type: 'social' as const,
+					category: 'social' as const,
 					title: `Встреча с ${creature.name}`,
 					description: `${hero.name} ${action} ${creature.name}. Завели интересный разговор о смысле жизни и сыре.`,
 					thought: getRandomThought('friendship'),
@@ -254,6 +263,7 @@ const eventTemplates = {
 			generate: (hero: any) => {
 				return {
 					type: 'social' as const,
+					category: 'social' as const,
 					title: `Ковёр-торговец`,
 					description: `${hero.name} встретил ковра-торговца! Ковёр предложил сделку: душу за носок. Герой отказался, но получил скидку.`,
 					thought: 'Ковёр разговаривает! И цены разумные!',
@@ -271,6 +281,7 @@ const eventTemplates = {
 			generate: (hero: any) => {
 				return {
 					type: 'social' as const,
+					category: 'social' as const,
 					title: `Философская беседа с лошадью`,
 					description: `Лошадь-философ поделилась мудростью: "Сено - это смысл". ${hero.name} задумался.`,
 					thought: getRandomThought('philosophical'),
@@ -289,6 +300,7 @@ const eventTemplates = {
 				
 				return {
 					type: 'social' as const,
+					category: 'social' as const,
 					title: `Кот требует рыбку`,
 					description: `${hero.name} встретил кота. Кот потребовал рыбку. Герой подчинился. Теперь кот - босс.`,
 					thought: 'Кот главный. Я просто слуга.',
@@ -312,6 +324,7 @@ const eventTemplates = {
 				
 				return {
 					type: 'absurd' as const,
+					category: 'event' as const,
 					title: `Дождь из сыров`,
 					description: `В ${location.name} начался дождь из сыров! ${hero.name} собрал сыры, продал их и разбогател. Обычный день в Тамриэле.`,
 					thought: 'Сыр с неба! Мечта сбылась!',
@@ -328,6 +341,7 @@ const eventTemplates = {
 			generate: (hero: any) => {
 				return {
 					type: 'absurd' as const,
+					category: 'event' as const,
 					title: `Гриб-король`,
 					description: `${hero.name} пытался укрыться от дождя под грибом, но гриб оказался живым! И королём! Теперь герой - главный гриб королевства грибов!`,
 					thought: 'Я... гриб? Нет, я ГЛАВНЫЙ гриб!',
@@ -345,6 +359,7 @@ const eventTemplates = {
 			generate: (hero: any) => {
 				return {
 					type: 'absurd' as const,
+					category: 'event' as const,
 					title: `Телепорт в прошлое`,
 					description: `${hero.name} использовал носок-телепорт... и попал в прошлое! Встретил себя, поздоровался, вернулся. Неловко.`,
 					thought: 'Я встретил себя. Я себе понравился!',
@@ -361,6 +376,7 @@ const eventTemplates = {
 			generate: (hero: any) => {
 				return {
 					type: 'absurd' as const,
+					category: 'event' as const,
 					title: `Облака-художники`,
 					description: `${hero.name} обнаружил облака, рисующие картины! Облака нарисовали портрет героя. Абстракционизм.`,
 					thought: getRandomThought('absurd'),
@@ -380,6 +396,7 @@ const eventTemplates = {
 				
 				return {
 					type: 'absurd' as const,
+					category: 'event' as const,
 					title: `Превращение в сыр`,
 					description: `${hero.name} случайно превратился в сыр! Паника! Через минуту превращение прошло. Обычный вторник.`,
 					thought: 'Я был сыром. Теперь я не сыр. Жизнь странная.',
@@ -397,6 +414,7 @@ const eventTemplates = {
 			generate: (hero: any) => {
 				return {
 					type: 'absurd' as const,
+					category: 'event' as const,
 					title: `Танец с папоротником`,
 					description: `${hero.name} встретил танцующий папоротник и не устоял перед соблазном станцевать вальс. Папоротник лидировал.`,
 					thought: 'Танцевал с растением. Оно танцует лучше меня.',
@@ -416,6 +434,7 @@ const eventTemplates = {
 				
 				return {
 					type: 'absurd' as const,
+					category: 'event' as const,
 					title: `Случайная магия`,
 					description: `${hero.name} чихнул и случайно сотворил заклинание! Появился ${item.name}. Магия непредсказуема!`,
 					thought: 'Чихнул - получил артефакт. Гениально!',
@@ -436,6 +455,7 @@ const eventTemplates = {
 			generate: (hero: any) => {
 				return {
 					type: 'death' as const,
+					category: 'danger' as const,
 					title: `Смерть от лестницы`,
 					description: `${hero.name} умер от падения с лестницы... но лестница извинилась и воскресила героя! Даже подарила золотой зуб!`,
 					thought: 'Умер. Воскрес. Получил подарок. Выгодно!',
@@ -454,6 +474,7 @@ const eventTemplates = {
 			generate: (hero: any) => {
 				return {
 					type: 'death' as const,
+					category: 'danger' as const,
 					title: `Смерть от смеха`,
 					description: `${hero.name} услышал шутку от облака и умер от смеха! Облако испугалось и вернуло героя к жизни.`,
 					thought: 'Смешно до смерти... буквально!',
@@ -475,6 +496,7 @@ const eventTemplates = {
 			generate: (hero: any) => {
 				return {
 					type: 'idle' as const,
+					category: 'rest' as const,
 					title: `Рисование облаков`,
 					description: `${hero.name} начал рисовать портреты облаков. Облака позировали. Получились шедевры! Может, кликни?`,
 					thought: getRandomThought('idle'),
@@ -491,6 +513,7 @@ const eventTemplates = {
 			generate: (hero: any) => {
 				return {
 					type: 'idle' as const,
+					category: 'rest' as const,
 					title: `Философский трактат`,
 					description: `${hero.name} пишет философский трактат о смысле кнопок. Уже 50 страниц! Может, пора кликнуть?`,
 					thought: 'Кнопки... их смысл глубок...',
@@ -507,6 +530,7 @@ const eventTemplates = {
 			generate: (hero: any) => {
 				return {
 					type: 'idle' as const,
+					category: 'rest' as const,
 					title: `Дракон принёс подушку`,
 					description: `${hero.name} уснул стоя. Дракон принёс подушку и ушёл. Забота!`,
 					thought: getRandomThought('idle'),
@@ -570,11 +594,6 @@ export async function generateEvent(hero: any): Promise<GameEvent> {
 	// Генерируем событие
 	const event = selectedTemplate.generate(hero);
 	
-	// Автоматически устанавливаем category если её нет
-	if (!event.category) {
-		event.category = getCategoryByType(event.type);
-	}
-	
 	return event;
 }
 
@@ -589,11 +608,6 @@ export function generateIdleEvent(hero: any, idleTime: number): GameEvent {
 		event = eventTemplates.idle[1].generate(hero);
 	} else { // более 2 минут
 		event = eventTemplates.idle[2].generate(hero);
-	}
-	
-	// Автоматически устанавливаем category если её нет
-	if (!event.category) {
-		event.category = getCategoryByType(event.type);
 	}
 	
 	return event;

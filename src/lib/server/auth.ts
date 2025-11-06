@@ -64,12 +64,10 @@ export async function getUserFromCookie(event: RequestEvent): Promise<{ user: an
 	
 	if (!user) return null;
 	
-	// Получаем героя пользователя
-	const hero = await db.query.heroes.findFirst({
-		where: eq(heroes.userId, user.id)
-	});
+	// Получаем героя пользователя со всеми полями
+	const hero = await db.select().from(heroes).where(eq(heroes.userId, user.id)).limit(1);
 	
-	return { user, hero };
+	return { user, hero: hero[0] || null };
 }
 
 /**
@@ -151,10 +149,9 @@ export async function loginUser(email: string, password: string) {
 		.set({ lastLogin: new Date() })
 		.where(eq(users.id, user.id));
 	
-	// Получаем героя
-	const hero = await db.query.heroes.findFirst({
-		where: eq(heroes.userId, user.id)
-	});
+	// Получаем героя со всеми полями
+	const heroResult = await db.select().from(heroes).where(eq(heroes.userId, user.id)).limit(1);
+	const hero = heroResult[0];
 	
 	if (!hero) {
 		throw new Error('Hero not found');

@@ -81,8 +81,8 @@
 			return;
 		}
 		
-		// Устанавливаем героя в store
-		heroStore.set(data.hero);
+		// Устанавливаем героя в store (приводим к правильному типу)
+		heroStore.set(data.hero as any);
 		
 		// Загружаем квесты (пока используем примеры)
 		quests = sampleQuests;

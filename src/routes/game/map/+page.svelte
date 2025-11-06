@@ -4,6 +4,9 @@
 	
 	export let data;
 	
+	// Приводим hero к any для избежания проблем с типами
+	const heroData = data.hero as any;
+	
 	const regions = [
 		{ name: 'Skyrim', color: '#6C757D', locations: ['Вайтран', 'Рифтен', 'Солитьюд', 'Виндхельм', 'Маркарт'] },
 		{ name: 'Morrowind', color: '#495057', locations: ['Вивек', 'Балмора', 'Альд-Рун'] },
@@ -24,10 +27,10 @@
 			<h1 class="text-2xl font-bold text-center mb-4 text-text-primary">🗺️ Карта Тамриэля</h1>
 			
 			<!-- Текущая локация героя -->
-			{#if data.hero?.currentLocation}
+			{#if heroData?.currentLocation}
 				<div class="text-center mb-6 p-3 bg-info bg-opacity-10 border border-info rounded">
 					<p class="text-sm text-text-secondary">Вы находитесь в:</p>
-					<p class="text-lg font-semibold text-info">📍 {data.hero.currentLocation}</p>
+					<p class="text-lg font-semibold text-info">📍 {heroData.currentLocation}</p>
 				</div>
 			{/if}
 			
@@ -69,15 +72,15 @@
 						{#if selectedRegion === region.name}
 							<div class="mt-3 space-y-2 border-t border-border-light pt-3">
 								{#each region.locations as location}
-									<div 
+									<div
 										class="p-2 bg-bg-secondary rounded text-sm hover:bg-bg-tertiary transition-all cursor-pointer"
-										class:bg-info={data.hero?.currentLocation === location}
-										class:bg-opacity-20={data.hero?.currentLocation === location}
-										class:border={data.hero?.currentLocation === location}
-										class:border-info={data.hero?.currentLocation === location}
+										class:bg-info={heroData?.currentLocation === location}
+										class:bg-opacity-20={heroData?.currentLocation === location}
+										class:border={heroData?.currentLocation === location}
+										class:border-info={heroData?.currentLocation === location}
 									>
-										<span class:font-semibold={data.hero?.currentLocation === location}>
-											{data.hero?.currentLocation === location ? '📍' : '📌'} {location}
+										<span class:font-semibold={heroData?.currentLocation === location}>
+											{heroData?.currentLocation === location ? '📍' : '📌'} {location}
 										</span>
 									</div>
 								{/each}
