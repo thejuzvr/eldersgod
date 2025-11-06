@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { ContentService } from '$lib/services/contentService';
 	
 	// Статистика
 	let stats = {
@@ -22,37 +21,15 @@
 		error = '';
 		
 		try {
-			// Загружаем всю статистику контента
-			const result = await ContentService.getContentStats();
+			// Загружаем через API
+			const response = await fetch('/api/content?limit=1000');
+			const result = await response.json();
 			
-			// Проверяем что результат валидный
-			if (result && typeof result === 'object' && 'total' in result) {
-				stats = result as any;
-			} else {
-				await loadStatsFromSearch();
+			if (!result.success) {
+				throw new Error(result.error);
 			}
 			
-		} catch (err) {
-			console.log('getContentStats method not available, loading via search');
-			await loadStatsFromSearch();
-		} finally {
-			loading = false;
-		}
-	}
-	
-	// Загрузка статистики через поиск (fallback)
-	async function loadStatsFromSearch() {
-		try {
-			const allContent = await ContentService.searchContent({
-				limit: 1000,
-				sortBy: 'createdAt',
-				sortOrder: 'desc',
-				offset: 0,
-				includeAnalytics: false,
-				includeTranslations: false
-			});
-			
-			const items = allContent.items;
+			const items = result.data.items;
 			
 			stats = {
 				total: items.length,

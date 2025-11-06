@@ -1,6 +1,6 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { ContentService } from '$lib/services/contentService';
+import { ContentService } from '$lib/server/contentService';
 
 /**
  * GET /api/content/thoughts

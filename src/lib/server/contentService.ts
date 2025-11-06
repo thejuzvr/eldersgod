@@ -1,10 +1,10 @@
-import { db } from '../server/db';
-import { gameContent, contentAnalytics, contentCategories } from '../server/db/schema';
+import { db } from './db';
+import { gameContent, contentAnalytics, contentCategories } from './db/schema';
 import { eq, and, desc, sql, count } from 'drizzle-orm';
-import { redisClient as redis } from '../server/redis';
+import { redisClient as redis } from './redis';
 import { z } from 'zod';
 import { getContentSchemaByType, type ContentSearchOptionsData } from '../utils/contentValidators';
-import type { GameContent, NewGameContent } from '../server/db/schema';
+import type { GameContent, NewGameContent } from './db/schema';
 
 // ========== КОНСТАНТЫ КЭШИРОВАНИЯ ==========
 const CACHE_PREFIX = 'content:';
@@ -21,7 +21,7 @@ const CACHE_KEYS = {
     STATS: `${CACHE_PREFIX}stats`,
     RANDOM: (type: string, filter: string) => `${CACHE_PREFIX}random:${type}:${filter}`,
     ALL_TYPES: `${CACHE_PREFIX}types`,
-    SEARCH: (query: string) => `${CACHE_PREFIX}search:${Buffer.from(query).toString('base64')}`
+    SEARCH: (query: string) => `${CACHE_PREFIX}search:${encodeURIComponent(query)}`
 };
 
 export class ContentService {

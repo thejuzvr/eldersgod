@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { ContentService } from '$lib/services/contentService';
 	import ContentTable from '$lib/components/admin/ContentTable.svelte';
 	import ContentForm from '$lib/components/admin/ContentForm.svelte';
 	import ContentStats from '$lib/components/admin/ContentStats.svelte';
@@ -31,17 +30,24 @@
 		error = '';
 		
 		try {
-			const filter = currentFilter === 'all' ? {} : { type: currentFilter };
-			const result = await ContentService.searchContent({
-				filter,
-				limit: 100,
+			// Используем API вместо прямого импорта
+			const params = new URLSearchParams({
+				limit: '100',
 				sortBy: 'updatedAt',
 				sortOrder: 'desc',
-				offset: 0,
-				includeAnalytics: false,
-				includeTranslations: false
+				offset: '0'
 			});
-			content = result.items;
+			
+			if (currentFilter !== 'all') {
+				params.append('type', currentFilter);
+			}
+			
+			const response = await fetch(`/api/content?${params}`);
+			const result = await response.json();
+			
+			if (result.success) {
+				content = result.data.items;
+			}
 		} catch (err) {
 			error = err instanceof Error ? err.message : 'Ошибка загрузки данных';
 		} finally {
@@ -63,8 +69,17 @@
 	
 	async function handleDeleteContent(id: number) {
 		try {
-			await ContentService.deleteContent(id);
-			content = content.filter(c => c.id !== id);
+			const response = await fetch(`/api/content/${id}`, {
+				method: 'DELETE'
+			});
+			
+			const result = await response.json();
+			
+			if (result.success) {
+				content = content.filter(c => c.id !== id);
+			} else {
+				alert('Ошибка при удалении: ' + result.error);
+			}
 		} catch (err) {
 			alert('Ошибка при удалении: ' + (err instanceof Error ? err.message : 'Unknown error'));
 		}

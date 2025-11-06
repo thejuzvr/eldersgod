@@ -1,6 +1,6 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { ContentService } from '$lib/services/contentService';
+import { ContentService } from '$lib/server/contentService';
 import { ContentFilterSchema, ContentSearchOptionsSchema } from '$lib/utils/contentValidators';
 import { getUserFromCookie } from '$lib/server/auth';
 

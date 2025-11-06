@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { createEventDispatcher, onMount } from 'svelte';
 	import type { GameContent } from '$lib/server/db/schema';
-	import { ContentService } from '$lib/services/contentService';
-	import { createValidContent } from '$lib/utils/contentValidators';
 	
 	export let content: GameContent | null = null;
 	
@@ -130,15 +128,35 @@
 				}
 			};
 			
-			// Создаем или обновляем контент
+			// Создаем или обновляем контент через API
 			if (content) {
 				// Обновление
-				await ContentService.updateContent(content.id, contentData);
-				success = 'Контент успешно обновлён';
+				const response = await fetch(`/api/content/${content.id}`, {
+					method: 'PUT',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(contentData)
+				});
+				
+				const result = await response.json();
+				if (result.success) {
+					success = 'Контент успешно обновлён';
+				} else {
+					throw new Error(result.error);
+				}
 			} else {
 				// Создание
-				await ContentService.createContent(contentData);
-				success = 'Контент успешно создан';
+				const response = await fetch('/api/content', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(contentData)
+				});
+				
+				const result = await response.json();
+				if (result.success) {
+					success = 'Контент успешно создан';
+				} else {
+					throw new Error(result.error);
+				}
 			}
 			
 			// Закрываем форму через 1.5 секунды
