@@ -1,10 +1,13 @@
 <script lang="ts">
 	import Navigation from './Navigation.svelte';
+	import Notifications from './Notifications.svelte';
 	
 	export let showLeftPanel = true;
 	export let showRightPanel = true;
 	export let showNavigation = true;
 </script>
+
+<Notifications />
 
 {#if showNavigation}
 	<Navigation />

@@ -3,11 +3,12 @@ import { getRandomItem } from './data/items';
 import { getRandomAction } from './data/actions';
 import { getRandomLocation } from './data/locations';
 import { getRandomThought } from './data/thoughts';
+import { getRandomSkill } from './data/skills';
 import type { Hero } from '$lib/server/db/schema';
 import type { EventCategory } from '$lib/stores/gameStore';
 
 export interface GameEvent {
-  type: 'combat' | 'exploration' | 'social' | 'absurd' | 'death' | 'idle' | 'levelup' | 'noise';
+  type: 'combat' | 'exploration' | 'social' | 'absurd' | 'death' | 'idle' | 'levelup' | 'noise' | 'skill';
   category: EventCategory;
   title: string;
   description: string;
@@ -21,6 +22,7 @@ export interface GameEvent {
     health?: number;
     item?: any;
     newTitle?: string;
+    skill?: any;
   };
   interactive?: boolean;
   icon?: string;
@@ -181,6 +183,47 @@ const eventTemplates = {
     }
   ],
 
+  skill: [
+    {
+      weight: 10,
+      generate: (hero: any) => {
+        const location = getRandomLocation();
+        const skill = getRandomSkill();
+        const isWordOfPower = Math.random() > 0.5;
+
+        let title, description, thought, icon;
+
+        const rarities = ['обычное', 'редкое', 'легендарное'];
+        const rarity = rarities[Math.floor(Math.random() * rarities.length)];
+
+        if (isWordOfPower) {
+          title = `Слово Силы: ${skill.name}`;
+          description = `В древних руинах ${location.name} ${hero.name} находит стену драконьих слов. Вспышка света, и знание впитывается в разум. Изучено ${rarity} умение: ${skill.name} (${skill.description}).`;
+          thought = getRandomThought('generic_happy', hero.name);
+          icon = '🪨';
+        } else {
+          title = `Древняя книга: ${skill.name}`;
+          description = `Среди пыльных полок в заброшенной башне ${location.name} ${hero.name} находит странный фолиант. Прочитав его, герой осваивает ${rarity} умение: ${skill.name} (${skill.description}).`;
+          thought = getRandomThought('generic_neutral', hero.name);
+          icon = '📚';
+        }
+
+        return {
+          type: 'skill' as const,
+          category: 'reward' as const,
+          title,
+          description,
+          thought,
+          rewards: {
+            exp: 100,
+            skill: { ...skill, rarity }
+          },
+          icon
+        };
+      }
+    }
+  ],
+
   absurd: [
     {
       weight: 15,
@@ -262,39 +305,44 @@ export async function generateEvent(hero: any): Promise<GameEvent> {
   const preferredType = determineHeroState(hero);
 
   // Определяем вес каждого типа события с уклоном в предпочтение AI
-  const weights: Record<keyof typeof eventTemplates, number> = {
+  const weights: Record<string, number> = {
     combat: preferredType === 'combat' ? 60 : 20,
     exploration: preferredType === 'exploration' ? 50 : 20,
     social: preferredType === 'social' ? 40 : 15,
     absurd: 5,
     idle: preferredType === 'idle' ? 50 : 5,
+    skill: 15,
     noise: 0 // Шум обрабатывается отдельно
   };
 
   // Выбираем тип события
   const totalWeight = Object.values(weights).reduce((a, b) => a + b, 0);
   let random = Math.random() * totalWeight;
-  let selectedType: keyof typeof eventTemplates = 'exploration';
+  let selectedType = 'exploration';
 
   for (const [type, weight] of Object.entries(weights)) {
     random -= weight;
     if (random <= 0) {
-      selectedType = type as keyof typeof eventTemplates;
+      selectedType = type;
       break;
     }
   }
 
   // Получаем шаблоны для выбранного типа
+  // @ts-ignore
   const templates = eventTemplates[selectedType];
   if (!templates || templates.length === 0) {
     selectedType = 'exploration'; // fallback
   }
 
   // Выбираем конкретный шаблон по весу
+  // @ts-ignore
   const templateTotalWeight = eventTemplates[selectedType].reduce((sum, t) => sum + t.weight, 0);
   random = Math.random() * templateTotalWeight;
 
+  // @ts-ignore
   let selectedTemplate = eventTemplates[selectedType][0];
+  // @ts-ignore
   for (const template of eventTemplates[selectedType]) {
     random -= template.weight;
     if (random <= 0) {

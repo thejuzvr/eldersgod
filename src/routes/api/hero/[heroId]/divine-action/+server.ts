@@ -76,6 +76,15 @@ export const POST: RequestHandler = async ({ params, request, locals }) => {
 
 		await invalidateHeroCache(heroId);
 
+		const { publishEventToHero } = await import('$lib/server/redis');
+		await publishEventToHero(heroId, {
+			type: 'divine_intervention',
+			intervention: {
+				type: action,
+				message: action === 'bless' ? 'Боги благословили вас!' : 'Небесная кара настигла вас!'
+			}
+		});
+
 		return json({ 
 			success: true, 
 			hero: { ...hero, ...updates },

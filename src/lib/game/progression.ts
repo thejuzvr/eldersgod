@@ -1,6 +1,6 @@
 import { db } from '$lib/server/db';
-import { heroes, heroInventory, items } from '$lib/server/db/schema';
-import { eq } from 'drizzle-orm';
+import { heroes, heroInventory, items, heroSkills } from '$lib/server/db/schema';
+import { eq, and } from 'drizzle-orm';
 import { getTitleByLevel } from './data/titles';
 import { invalidateHeroCache } from '$lib/server/redis';
 
@@ -134,7 +134,68 @@ export async function applyEventRewards(heroId: number, rewards: any, healthChan
 		await addItemToInventory(heroId, rewards.item);
 	}
 	
+	// Добавляем умение
+	if (rewards.skill) {
+		await addSkillToHero(heroId, rewards.skill);
+	}
+
 	return { leveledUp, newLevel, heroDied };
+}
+
+/**
+ * Изучить новое умение
+ */
+async function addSkillToHero(heroId: number, skillData: any) {
+	// Проверяем, есть ли уже это умение
+	const existingSkill = await db.query.heroSkills.findFirst({
+		where: and(
+			eq(heroSkills.heroId, heroId),
+			eq(heroSkills.name, skillData.name)
+		)
+	});
+
+	if (existingSkill) {
+		// Если умение уже есть, повышаем его уровень
+		await db.update(heroSkills)
+			.set({ level: existingSkill.level + 1 })
+			.where(eq(heroSkills.id, existingSkill.id));
+	} else {
+		// Если нет - добавляем новое
+		await db.insert(heroSkills).values({
+			heroId,
+			name: skillData.name,
+			description: skillData.description,
+			category: skillData.category || 'combat',
+			icon: skillData.icon || '📚',
+			level: 1
+		});
+	}
+
+	// Пассивные бонусы от скиллов - повышаем характеристики
+	const hero = await db.query.heroes.findFirst({
+		where: eq(heroes.id, heroId)
+	});
+
+	if (hero) {
+		const updates: any = {};
+
+		// Редкие умения дают больше бонусов
+		const multiplier = skillData.rarity === 'легендарное' ? 3 : (skillData.rarity === 'редкое' ? 2 : 1);
+
+		if (skillData.category === 'combat') {
+			updates.strength = hero.strength + (1 * multiplier);
+		} else if (skillData.category === 'magic') {
+			updates.intelligence = hero.intelligence + (1 * multiplier);
+		} else {
+			updates.luck = hero.luck + (1 * multiplier);
+		}
+
+		await db.update(heroes)
+			.set(updates)
+			.where(eq(heroes.id, heroId));
+
+		await invalidateHeroCache(heroId);
+	}
 }
 
 /**
@@ -168,8 +229,8 @@ async function addItemToInventory(heroId: number, itemData: any) {
 		item = newItem;
 	}
 	
-	// Автоматическая экипировка: проверяем, есть ли уже предмет этого типа
-	const currentEquipped = await db.query.heroInventory.findFirst({
+	// Автоматическая экипировка: получаем все экипированные предметы героя
+	const currentEquippedList = await db.query.heroInventory.findMany({
 		where: (heroInventory, { eq, and }) =>
 			and(
 				eq(heroInventory.heroId, heroId),
@@ -180,25 +241,28 @@ async function addItemToInventory(heroId: number, itemData: any) {
 		}
 	});
 	
+	// Ищем экипированный предмет того же типа, что и новый
+	const currentEquippedOfSameType = currentEquippedList.find(inv => inv.item.type === item.type);
+
 	// Решение героя: экипировать новый предмет если он лучше (по редкости и статам)
 	let shouldEquip = false;
 	
-	if (!currentEquipped) {
-		// Нет экипированных предметов - одеваем
+	if (!currentEquippedOfSameType) {
+		// Нет экипированного предмета такого типа - одеваем
 		shouldEquip = true;
-	} else if (currentEquipped.item.type === item.type) {
+	} else {
 		// Есть предмет того же типа - сравниваем
 		const rarityOrder = ['common', 'uncommon', 'rare', 'epic', 'legendary', 'absurd'];
 		const newRarityIndex = rarityOrder.indexOf(item.rarity);
-		const oldRarityIndex = rarityOrder.indexOf(currentEquipped.item.rarity);
+		const oldRarityIndex = rarityOrder.indexOf(currentEquippedOfSameType.item.rarity);
 		
 		if (newRarityIndex > oldRarityIndex) {
-			// Новый предмет реже - одеваем
+			// Новый предмет лучше (по редкости) - одеваем
 			shouldEquip = true;
 			// Снимаем старый
 			await db.update(heroInventory)
 				.set({ equipped: false })
-				.where(eq(heroInventory.id, currentEquipped.id));
+				.where(eq(heroInventory.id, currentEquippedOfSameType.id));
 		}
 	}
 	
@@ -248,10 +312,17 @@ export async function equipItem(heroId: number, inventoryItemId: number) {
 		throw new Error('Item not found in inventory');
 	}
 	
-	// Снимаем все предметы того же типа
-	await db.update(heroInventory)
-		.set({ equipped: false })
-		.where(eq(heroInventory.heroId, heroId));
+	// Находим все предметы, чтобы снять предмет того же типа
+	const heroItems = await db.query.heroInventory.findMany({
+		where: eq(heroInventory.heroId, heroId),
+		with: {
+			item: true
+		}
+	});
+	const sameTypeEquipped = heroItems.filter(inv => inv.item.type === inventoryItem.item.type && inv.equipped);
+	for (const inv of sameTypeEquipped) {
+		await unequipItem(heroId, inv.id);
+	}
 	
 	// Экипируем выбранный
 	await db.update(heroInventory)
@@ -373,12 +444,19 @@ export async function calculateHeroStats(heroId: number) {
 		}
 	}
 	
+	// Бонусы от навыков уже включены в базу (так как мы обновляем статы при получении)
+	// Но мы можем возвращать список навыков вместе со статами
+	const skills = await db.query.heroSkills.findMany({
+		where: eq(heroSkills.heroId, heroId)
+	});
+
 	return {
 		...hero,
 		totalStrength,
 		totalIntelligence,
 		totalLuck,
-		totalHealth
+		totalHealth,
+		skills
 	};
 }
 

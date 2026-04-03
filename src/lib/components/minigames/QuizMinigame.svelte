@@ -58,10 +58,14 @@
 
 <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
   <div class="parchment max-w-md w-full p-6 shadow-lg">
-    <h2 class="text-2xl font-semibold text-center mb-4 text-text-primary">📜 Испытание знаний</h2>
+    <h2 class="text-2xl font-semibold text-center mb-2 text-text-primary">📜 Шепот предков</h2>
 
-    <p class="text-text-secondary text-center mb-6 text-sm">
-      {currentQuestion.q}
+    <div class="mb-6 text-center text-sm italic text-text-muted">
+      Вокруг вас появляются призрачные силуэты. Предки смотрят на вас сквозь пелену времени, желая проверить, достойны ли вы их наследия...
+    </div>
+
+    <p class="text-text-secondary text-center mb-6 text-sm font-medium">
+      "{currentQuestion.q}"
     </p>
 
     <div class="space-y-2 mb-4">
@@ -89,14 +93,21 @@
     {#if result === 'correct'}
       <div class="p-3 bg-success bg-opacity-10 border border-success rounded mb-4">
         <p class="text-success font-semibold text-center text-sm">
-          ✅ Верно! Ваши знания о Тамриэле впечатляют.
+          ✅ Предки довольно кивают и даруют вам свое благословение!
         </p>
-        <p class="text-center text-text-secondary text-xs mt-2">+100 опыта, +50 золота</p>
+        <div class="flex justify-center gap-4 mt-2">
+          <span class="text-xs font-semibold px-2 py-1 bg-bg-primary rounded border border-border-light shadow-sm text-text-secondary">
+            🌟 +100 опыта
+          </span>
+          <span class="text-xs font-semibold px-2 py-1 bg-bg-primary rounded border border-border-light shadow-sm text-text-secondary">
+            💰 +50 золота
+          </span>
+        </div>
       </div>
     {:else if result === 'wrong'}
       <div class="p-3 bg-danger bg-opacity-10 border border-danger rounded mb-4">
         <p class="text-danger font-semibold text-center text-sm">
-          ❌ Увы, неверно. Правильный ответ: {currentQuestion.options[currentQuestion.answer]}.
+          ❌ Духи разочарованно качают головами и растворяются в воздухе... Правильный ответ: {currentQuestion.options[currentQuestion.answer]}.
         </p>
       </div>
     {/if}
