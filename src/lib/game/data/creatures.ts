@@ -1,89 +1,46 @@
-// Существа для событий в мире Elder Scrolls (с абсурдом)
+// Существа для событий в мире Elder Scrolls + небольшой процент абсурда. С добавлением Armor Class (AC)
 export const creatures = [
-	// Драконы
-	{ name: 'Дракон-пчеловод', icon: '🐉', hostile: false, absurdity: 'высокая' },
-	{ name: 'Кекс-дракон', icon: '🐲', hostile: true, absurdity: 'максимальная' },
-	{ name: 'Дракон-философ', icon: '🐉', hostile: false, absurdity: 'высокая' },
-	{ name: 'Миниатюрный дракон в шапке', icon: '🐲', hostile: false, absurdity: 'высокая' },
-	{ name: 'Дракон из замороженного крика', icon: '❄️', hostile: true, absurdity: 'средняя' },
-	
-	// Грибы и растения
-	{ name: 'Гриб-воин', icon: '🍄', hostile: true, absurdity: 'высокая' },
-	{ name: 'Живой гриб', icon: '🍄', hostile: false, absurdity: 'средняя' },
-	{ name: 'Королевский гриб', icon: '👑', hostile: false, absurdity: 'высокая' },
-	{ name: 'Поющая капуста', icon: '🥬', hostile: false, absurdity: 'максимальная' },
-	{ name: 'Танцующий папоротник', icon: '🌿', hostile: false, absurdity: 'высокая' },
-	
-	// Животные-философы
-	{ name: 'Лошадь-философ', icon: '🐴', hostile: false, absurdity: 'высокая' },
-	{ name: 'Кот-требующий-рыбку', icon: '🐱', hostile: false, absurdity: 'средняя' },
-	{ name: 'Медведь-поэт', icon: '🐻', hostile: false, absurdity: 'высокая' },
-	{ name: 'Волк в овечьей шкуре (буквально)', icon: '🐺', hostile: true, absurdity: 'средняя' },
-	{ name: 'Краб-кузнец', icon: '🦀', hostile: false, absurdity: 'высокая' },
-	
-	// Ожившие предметы
-	{ name: 'Ковёр-торговец', icon: '🧶', hostile: false, absurdity: 'максимальная' },
-	{ name: 'Лестница с характером', icon: '🪜', hostile: true, absurdity: 'максимальная' },
-	{ name: 'Говорящий камень', icon: '🪨', hostile: false, absurdity: 'высокая' },
-	{ name: 'Метла с амбициями', icon: '🧹', hostile: false, absurdity: 'высокая' },
-	{ name: 'Ложка судьбы', icon: '🥄', hostile: false, absurdity: 'максимальная' },
-	
-	// Сырные монстры
-	{ name: 'Сырный голем', icon: '🧀', hostile: true, absurdity: 'высокая' },
-	{ name: 'Летающий сыр', icon: '🧀', hostile: false, absurdity: 'максимальная' },
-	{ name: 'Король сыров', icon: '👑', hostile: true, absurdity: 'высокая' },
-	
-	// Облака
-	{ name: 'Облако-художник', icon: '☁️', hostile: false, absurdity: 'высокая' },
-	{ name: 'Говорящее облако', icon: '☁️', hostile: false, absurdity: 'средняя' },
-	{ name: 'Грозовое облако с чувством юмора', icon: '⛈️', hostile: false, absurdity: 'высокая' },
-	
-	// Elder Scrolls классика (но абсурдная)
-	{ name: 'Двемерский автомат-официант', icon: '🤖', hostile: false, absurdity: 'высокая' },
-	{ name: 'Даэдра в отпуске', icon: '👹', hostile: false, absurdity: 'высокая' },
-	{ name: 'Скелет-барабанщик', icon: '💀', hostile: false, absurdity: 'средняя' },
-	{ name: 'Зомби-садовник', icon: '🧟', hostile: false, absurdity: 'средняя' },
-	{ name: 'Вампир-вегетарианец', icon: '🧛', hostile: false, absurdity: 'высокая' },
-	
-	// Насекомые
-	{ name: 'Кузнечик-король', icon: '🦗', hostile: false, absurdity: 'максимальная' },
-	{ name: 'Пчела-философ', icon: '🐝', hostile: false, absurdity: 'высокая' },
-	{ name: 'Светящийся жук-поэт', icon: '🪲', hostile: false, absurdity: 'высокая' },
-	
-	// Необычные NPC
-	{ name: 'Бродячий торговец носками', icon: '👤', hostile: false, absurdity: 'высокая' },
-	{ name: 'Алхимик-неудачник', icon: '🧙', hostile: false, absurdity: 'средняя' },
-	{ name: 'Бард без голоса', icon: '🎭', hostile: false, absurdity: 'высокая' },
-	{ name: 'Стража, потерявший меч', icon: '🛡️', hostile: false, absurdity: 'средняя' },
-	
-	// Стихии
-	{ name: 'Огонь с характером', icon: '🔥', hostile: true, absurdity: 'высокая' },
-	{ name: 'Дружелюбная молния', icon: '⚡', hostile: false, absurdity: 'высокая' },
-	{ name: 'Лёд, мечтающий стать водой', icon: '🧊', hostile: false, absurdity: 'максимальная' },
-	
-	// Еда-монстры
-	{ name: 'Агрессивный хлеб', icon: '🍞', hostile: true, absurdity: 'максимальная' },
-	{ name: 'Сладкий рулет-гладиатор', icon: '🥐', hostile: true, absurdity: 'максимальная' },
-	{ name: 'Вишнёвый джем с амбициями', icon: '🍒', hostile: false, absurdity: 'максимальная' },
-	
-	// Транспорт
-	{ name: 'Телега-философ', icon: '🛒', hostile: false, absurdity: 'высокая' },
-	{ name: 'Лодка на ногах', icon: '⛵', hostile: false, absurdity: 'максимальная' },
-	
-	// Мебель
-	{ name: 'Стул с мнением', icon: '🪑', hostile: false, absurdity: 'высокая' },
-	{ name: 'Стол-дипломат', icon: '🪑', hostile: false, absurdity: 'высокая' },
-	
-	// Погода
-	{ name: 'Дождь из сыров', icon: '🌧️', hostile: false, absurdity: 'максимальная' },
-	{ name: 'Метель с чувством такта', icon: '❄️', hostile: false, absurdity: 'высокая' }
+  // Серьезные враги (Lore-friendly)
+  { id: 'wolf', name: 'Волк', icon: '🐺', hostile: true, absurdity: 'низкая', health: 20, armor: 11, damage: 3 },
+  { id: 'frost_spider', name: 'Морозный паук', icon: '🕷️', hostile: true, absurdity: 'низкая', health: 30, armor: 12, damage: 4 },
+  { id: 'bandit', name: 'Бандит', icon: '👤', hostile: true, absurdity: 'низкая', health: 40, armor: 12, damage: 5 },
+  { id: 'bandit_marauder', name: 'Бандит-мародер', icon: '👤', hostile: true, absurdity: 'низкая', health: 70, armor: 14, damage: 8 },
+  { id: 'draugr', name: 'Драугр', icon: '🧟', hostile: true, absurdity: 'низкая', health: 50, armor: 13, damage: 6 },
+  { id: 'draugr_wight', name: 'Драугр-страж', icon: '🧟', hostile: true, absurdity: 'низкая', health: 80, armor: 15, damage: 9 },
+  { id: 'draugr_overlord', name: 'Драугр-Владыка', icon: '💀', hostile: true, absurdity: 'низкая', health: 180, armor: 16, damage: 18 },
+  { id: 'falmer', name: 'Фалмер', icon: '🧝', hostile: true, absurdity: 'низкая', health: 40, armor: 11, damage: 7 },
+  { id: 'sabre_cat', name: 'Саблезуб', icon: '🐯', hostile: true, absurdity: 'низкая', health: 60, armor: 12, damage: 8 },
+  { id: 'spriggan', name: 'Озлобленный спригган', icon: '🌳', hostile: true, absurdity: 'низкая', health: 45, armor: 10, damage: 6 },
+  { id: 'vampire_thrall', name: 'Прислужник вампира', icon: '🧛', hostile: true, absurdity: 'низкая', health: 55, armor: 12, damage: 7 },
+  { id: 'vampire_master', name: 'Повелитель вампиров', icon: '🧛', hostile: true, absurdity: 'низкая', health: 110, armor: 15, damage: 14 },
+  { id: 'werewolf', name: 'Оборотень', icon: '🐺', hostile: true, absurdity: 'низкая', health: 95, armor: 14, damage: 13 },
+  { id: 'ice_wraith', name: 'Ледяное привидение', icon: '👻', hostile: true, absurdity: 'низкая', health: 70, armor: 13, damage: 10 },
+  { id: 'necromancer', name: 'Некромант', icon: '🧙', hostile: true, absurdity: 'низкая', health: 55, armor: 11, damage: 7 },
+  { id: 'mudcrab', name: 'Грязекраб', icon: '🦀', hostile: true, absurdity: 'низкая', health: 15, armor: 12, damage: 2 },
+  { id: 'dragon', name: 'Дракон', icon: '🐉', hostile: true, absurdity: 'низкая', health: 250, armor: 18, damage: 25 },
+
+  // Нейтральные NPC (Lore-friendly)
+  { id: 'hunter', name: 'Охотник', icon: '🏹', hostile: false, absurdity: 'низкая', health: 30, armor: 11, damage: 4 },
+  { id: 'traveling_merchant', name: 'Странствующий торговец', icon: '💰', hostile: false, absurdity: 'низкая', health: 20, armor: 10, damage: 2 },
+  { id: 'maiq_the_liar', name: "М'Айк Лжец", icon: '🐱', hostile: false, absurdity: 'низкая', health: 100, armor: 15, damage: 1 },
+  { id: 'pilgrim', name: 'Паломник', icon: '🚶', hostile: false, absurdity: 'низкая', health: 20, armor: 10, damage: 1 },
+
+  // Абсурдные существа (ограниченное количество для юмора)
+  { id: 'sweet_roll_thief', name: 'Похититель сладких рулетов', icon: '🏃', hostile: true, absurdity: 'высокая', health: 25, armor: 10, damage: 2 },
+  { id: 'cheese_golem', name: 'Сырный голем', icon: '🧀', hostile: true, absurdity: 'максимальная', health: 40, armor: 10, damage: 3 },
+  { id: 'cupcake_dragon', name: 'Кекс-дракон', icon: '🐲', hostile: true, absurdity: 'максимальная', health: 100, armor: 12, damage: 8 },
+  { id: 'angry_chicken', name: 'Разъярённая курица', icon: '🐔', hostile: true, absurdity: 'высокая', health: 5, armor: 5, damage: 1 }
 ];
 
 export function getRandomCreature() {
-	return creatures[Math.floor(Math.random() * creatures.length)];
+  return creatures[Math.floor(Math.random() * creatures.length)];
 }
 
-export function getCreaturesByAbsurdity(level: 'средняя' | 'высокая' | 'максимальная') {
-	return creatures.filter(c => c.absurdity === level);
+export function getRandomHostileCreature() {
+  const hostiles = creatures.filter(c => c.hostile);
+  return hostiles[Math.floor(Math.random() * hostiles.length)];
 }
 
+export function getCreaturesByAbsurdity(level: 'низкая' | 'средняя' | 'высокая' | 'максимальная') {
+  return creatures.filter(c => c.absurdity === level);
+}

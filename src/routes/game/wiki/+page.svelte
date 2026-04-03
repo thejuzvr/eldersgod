@@ -1,8 +1,6 @@
 <script lang="ts">
 	import GameLayout from '$lib/components/GameLayout.svelte';
 	
-	export let data;
-	
 	const wikiSections = [
 		{
 			id: 'about',
@@ -187,4 +185,3 @@
 		margin-top: 0.75rem;
 	}
 </style>
-

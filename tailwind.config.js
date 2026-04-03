@@ -11,22 +11,22 @@ export default {
 	theme: {
 		extend: {
 			colors: {
-				// Светлая строгая палитра
-				'bg-primary': '#FFFFFF',
-				'bg-secondary': '#F8F9FA',
-				'bg-tertiary': '#E9ECEF',
-				'border-light': '#DEE2E6',
-				'border-medium': '#ADB5BD',
-				'border-dark': '#6C757D',
-				'text-primary': '#212529',
-				'text-secondary': '#495057',
-				'text-muted': '#6C757D',
-				'accent-primary': '#495057',
-				'accent-secondary': '#6C757D',
-				'success': '#28A745',
-				'danger': '#DC3545',
-				'info': '#17A2B8',
-				'warning': '#FFC107'
+				// CSS переменные будут задаваться в app.css для поддержки тем
+				'bg-primary': 'var(--bg-primary)',
+				'bg-secondary': 'var(--bg-secondary)',
+				'bg-tertiary': 'var(--bg-tertiary)',
+				'border-light': 'var(--border-light)',
+				'border-medium': 'var(--border-medium)',
+				'border-dark': 'var(--border-dark)',
+				'text-primary': 'var(--text-primary)',
+				'text-secondary': 'var(--text-secondary)',
+				'text-muted': 'var(--text-muted)',
+				'accent-primary': 'var(--accent-primary)',
+				'accent-secondary': 'var(--accent-secondary)',
+				'success': 'var(--success)',
+				'danger': 'var(--danger)',
+				'info': 'var(--info)',
+				'warning': 'var(--warning)'
 			},
 			fontFamily: {
 				playfair: ['"Playfair Display"', 'serif'],
@@ -42,7 +42,7 @@ export default {
 		daisyui
 	],
 	daisyui: {
-		themes: false, // Отключаем стандартные темы, используем кастомные стили
+		themes: false,
 		logs: false
 	}
 };
