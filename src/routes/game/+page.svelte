@@ -9,10 +9,7 @@
 	import HeroThought from '$lib/components/HeroThought.svelte';
 	import QuestsPanel from '$lib/components/QuestsPanel.svelte';
 	import DivinePower from '$lib/components/DivinePower.svelte';
-	import DragonThought from '$lib/components/minigames/DragonThought.svelte';
-	import NumberGuess from '$lib/components/minigames/NumberGuess.svelte';
-	import QuickMath from '$lib/components/minigames/QuickMath.svelte';
-	import MemoryMatch from '$lib/components/minigames/MemoryMatch.svelte';
+	import QuizMinigame from '$lib/components/minigames/QuizMinigame.svelte';
 	import { heroStore, eventsStore, encountersStore, arenaStore, connectEventStream, activateHero, deactivateHero } from '$lib/stores/gameStore';
 	
 	export let data;
@@ -29,8 +26,7 @@
 	let arena: any = { inQueue: false, opponents: [], battles: [] };
 	let quests: any[] = [];
 	
-	let currentMinigame: string | null = null;
-	const minigames = ['dragon', 'number', 'math', 'memory'];
+	let showQuiz = false;
 	
 	// Примеры квестов (в реальности будут загружаться с сервера)
 	const sampleQuests = [
@@ -59,18 +55,6 @@
 				{ id: 3, title: 'Выиграйте 3 боя', completed: false }
 			],
 			rewards: { exp: 300, gold: 150 }
-		},
-		{
-			id: 3,
-			icon: '🎮',
-			title: 'Мастер мини-игр',
-			description: 'Докажите свою ловкость',
-			status: 'active',
-			subtasks: [
-				{ id: 1, title: 'Выиграйте любую мини-игру', completed: false },
-				{ id: 2, title: 'Выиграйте 5 мини-игр', completed: false }
-			],
-			rewards: { exp: 250, gold: 125 }
 		}
 	];
 	
@@ -174,8 +158,7 @@
 	}
 	
 	function handleThoughtClick() {
-		// Выбираем случайную мини-игру
-		currentMinigame = minigames[Math.floor(Math.random() * minigames.length)];
+		showQuiz = true;
 	}
 	
 	async function handleMinigameWin(event: CustomEvent) {
@@ -204,15 +187,15 @@
 			console.error('Failed to apply minigame reward:', error);
 		}
 		
-		currentMinigame = null;
+		showQuiz = false;
 	}
 	
 	function handleMinigameLose() {
-		currentMinigame = null;
+		showQuiz = false;
 	}
 	
 	function handleMinigameClose() {
-		currentMinigame = null;
+		showQuiz = false;
 	}
 </script>
 
@@ -288,7 +271,6 @@
 		
 		<ArenaPanel 
 			opponents={arena.opponents}
-			heroLevel={hero?.level || 1}
 			inQueue={arena.inQueue}
 			on:joinQueue={handleJoinArena}
 			on:viewBattles={() => goto('/game/arena')}
@@ -298,30 +280,11 @@
 	</div>
 </GameLayout>
 
-<!-- Мини-игры -->
-{#if currentMinigame === 'dragon'}
-	<DragonThought 
-		on:win={handleMinigameWin}
-		on:lose={handleMinigameLose}
-		on:close={handleMinigameClose}
-	/>
-{:else if currentMinigame === 'number'}
-	<NumberGuess 
-		on:win={handleMinigameWin}
-		on:lose={handleMinigameLose}
-		on:close={handleMinigameClose}
-	/>
-{:else if currentMinigame === 'math'}
-	<QuickMath 
-		on:win={handleMinigameWin}
-		on:lose={handleMinigameLose}
-		on:close={handleMinigameClose}
-	/>
-{:else if currentMinigame === 'memory'}
-	<MemoryMatch 
+<!-- Мини-игра (TES Quiz) -->
+{#if showQuiz}
+	<QuizMinigame
 		on:win={handleMinigameWin}
 		on:lose={handleMinigameLose}
 		on:close={handleMinigameClose}
 	/>
 {/if}
-

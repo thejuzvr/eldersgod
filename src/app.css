@@ -5,28 +5,47 @@
 @tailwind utilities;
 
 :root {
-	/* Строгая светлая цветовая палитра */
-	--bg-primary: #FFFFFF;
-	--bg-secondary: #F8F9FA;
-	--bg-tertiary: #E9ECEF;
-	--border-light: #DEE2E6;
-	--border-medium: #ADB5BD;
-	--border-dark: #6C757D;
-	--text-primary: #212529;
-	--text-secondary: #495057;
-	--text-muted: #6C757D;
-	--accent-primary: #495057;
-	--accent-secondary: #6C757D;
-	--success: #28A745;
-	--danger: #DC3545;
-	--info: #17A2B8;
-	--warning: #FFC107;
-	
+	/* Светлая тема (Скайрим / Пергамент) */
+	--bg-primary: #FDFBF7; /* Цвет светлого пергамента */
+	--bg-secondary: #F4EFE6;
+	--bg-tertiary: #EAE3D5;
+	--border-light: #D5CBB8;
+	--border-medium: #B8A88E;
+	--border-dark: #8C7C61;
+	--text-primary: #2C2620; /* Темно-коричневый для читаемости */
+	--text-secondary: #4A4238;
+	--text-muted: #736757;
+	--accent-primary: #8A2D2D; /* Темно-красный (Имперский) */
+	--accent-secondary: #632020;
+	--success: #3D6A35;
+	--danger: #8A2D2D;
+	--info: #2B577A;
+	--warning: #A87E2D; /* Золотистый */
+
 	/* Шрифты */
 	--font-playfair: 'Playfair Display', serif;
 	--font-bebas: 'Bebas Neue', sans-serif;
 	--font-inter: 'Inter', sans-serif;
 	--font-courier: 'Courier New', monospace;
+}
+
+.dark {
+	/* Темная тема (Скайрим / Ночь) */
+	--bg-primary: #1C1C1E; /* Темно-серый камень */
+	--bg-secondary: #252528;
+	--bg-tertiary: #2D2D31;
+	--border-light: #3A3A3F;
+	--border-medium: #4D4D54;
+	--border-dark: #63636C;
+	--text-primary: #EBEBEB; /* Светло-серый */
+	--text-secondary: #C4C4C8;
+	--text-muted: #95959A;
+	--accent-primary: #A87E2D; /* Золотистый (Скайрим) */
+	--accent-secondary: #D4A84D;
+	--success: #528C47;
+	--danger: #CC4444;
+	--info: #4686BC;
+	--warning: #D4A84D;
 }
 
 * {
@@ -41,11 +60,12 @@ body {
 	color: var(--text-primary);
 	min-height: 100vh;
 	overflow-x: hidden;
+	transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Глобальные стили для текста */
 h1, h2, h3, h4, h5, h6 {
-	font-family: var(--font-inter);
+	font-family: var(--font-playfair);
 	font-weight: 600;
 	color: var(--text-primary);
 	letter-spacing: -0.02em;
@@ -149,19 +169,6 @@ p {
 	border-color: var(--accent-secondary);
 }
 
-/* Мерцающий курсор для интерактивных элементов */
-.cursor-blink::after {
-	content: '→';
-	animation: blink 1s infinite;
-	margin-left: 6px;
-	color: var(--text-primary);
-}
-
-@keyframes blink {
-	0%, 50% { opacity: 1; }
-	51%, 100% { opacity: 0.3; }
-}
-
 /* Панели */
 .panel {
 	background: var(--bg-primary);
@@ -200,21 +207,12 @@ p {
 	font-family: var(--font-inter);
 	font-size: 0.75rem;
 	font-weight: 500;
-	color: var(--text-primary);
+	color: #fff; /* Всегда белый на заполненном баре */
 	z-index: 1;
+	text-shadow: 0 1px 2px rgba(0,0,0,0.5);
 }
 
-/* Иконки с эффектами */
-.icon-glow {
-	/* Убираем анимацию для строгого UI */
-}
-
-@keyframes float {
-	0%, 100% { transform: translateY(0); }
-	50% { transform: translateY(-5px); }
-}
-
-/* Карточки событий */
+/* Карточки событий с фиксом русского текста */
 .event-card {
 	background: var(--bg-primary);
 	border: 1px solid var(--border-light);
@@ -224,6 +222,9 @@ p {
 	position: relative;
 	transition: all 0.2s ease;
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+	overflow-wrap: break-word; /* Фикс для длинных русских слов */
+	word-wrap: break-word;
+	hyphens: auto;
 }
 
 .event-card:hover {
@@ -253,6 +254,7 @@ p {
 	color: var(--text-secondary);
 	position: relative;
 	font-size: 0.9rem;
+	overflow-wrap: break-word;
 }
 
 /* Анимация появления */
@@ -269,64 +271,6 @@ p {
 
 .fade-in-up {
 	animation: fadeInUp 0.5s ease-out;
-}
-
-/* Раскат свитка */
-@keyframes scrollUnroll {
-	from {
-		max-height: 0;
-		opacity: 0;
-	}
-	to {
-		max-height: 500px;
-		opacity: 1;
-	}
-}
-
-.scroll-unroll {
-	animation: scrollUnroll 0.6s ease-out;
-	overflow: hidden;
-}
-
-/* Эффект shake для критических событий */
-@keyframes shake {
-	0%, 100% { transform: translateX(0); }
-	25% { transform: translateX(-10px); }
-	75% { transform: translateX(10px); }
-}
-
-.shake {
-	animation: shake 0.5s ease;
-}
-
-/* Акцент текста */
-.glow-gold {
-	/* Убираем свечение для строгого UI */
-	color: var(--text-primary);
-	font-weight: 600;
-}
-
-/* Particle эффекты (для статов) */
-@keyframes particle-float {
-	0% {
-		transform: translateY(0) scale(1);
-		opacity: 1;
-	}
-	100% {
-		transform: translateY(-50px) scale(0.5);
-		opacity: 0;
-	}
-}
-
-.particle {
-	position: absolute;
-	pointer-events: none;
-	animation: particle-float 2s ease-out forwards;
-}
-
-/* Тени для карточек */
-.card-shadow {
-	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 /* Анимация пульса */
@@ -359,33 +303,3 @@ p {
 		margin: 10px 0;
 	}
 }
-
-/* Утилиты */
-.text-gold {
-	color: var(--text-primary);
-}
-
-.text-gold-light {
-	color: var(--text-secondary);
-}
-
-.text-orange {
-	color: var(--warning);
-}
-
-.text-green {
-	color: var(--success);
-}
-
-.text-red {
-	color: var(--danger);
-}
-
-.bg-dark {
-	background-color: var(--bg-secondary);
-}
-
-.bg-darker {
-	background-color: var(--bg-tertiary);
-}
-

@@ -1,17 +1,17 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
+	import InteractiveButton from './InteractiveButton.svelte';
 	
 	export let opponents: any[] = [];
-	export let heroLevel: number = 1;
 	export let inQueue = false;
 	
 	const dispatch = createEventDispatcher();
 	
-	function joinQueue() {
+	function handleJoinQueue() {
 		dispatch('joinQueue');
 	}
 	
-	function viewBattles() {
+	function handleViewBattles() {
 		dispatch('viewBattles');
 	}
 </script>
@@ -24,7 +24,7 @@
 	
 	{#if !inQueue}
 		<div class="text-center mb-4">
-			<button class="btn w-full btn-interactive" on:click={joinQueue}>
+			<button class="btn w-full btn-interactive" on:click={handleJoinQueue}>
 				Встать в очередь
 			</button>
 		</div>
@@ -65,9 +65,8 @@
 	
 	<!-- История боёв -->
 	<div class="mt-4 pt-4 border-t border-border-light">
-		<button class="btn w-full" on:click={viewBattles}>
+		<button class="btn w-full" on:click={handleViewBattles}>
 			История боёв
 		</button>
 	</div>
 </div>
-
