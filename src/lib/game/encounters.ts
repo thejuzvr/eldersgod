@@ -2,37 +2,30 @@ import { db } from '$lib/server/db';
 import { heroEncounters, heroes } from '$lib/server/db/schema';
 import { ne } from 'drizzle-orm';
 
+import { and, eq, or, desc } from 'drizzle-orm';
+import { publishEventToHero } from '$lib/server/redis';
+
 // Шаблоны встреч
 const encounterTemplates = {
-	rescue: [
-		'{hero1} спас {hero2} от падающего дракона!',
-		'{hero1} вытащил {hero2} из колодца с говорящими камнями!',
-		'{hero1} спас {hero2} от агрессивного хлеба!',
-		'{hero1} защитил {hero2} от кекса-дракона!'
+	robbery: [
+		'{hero1} попытался ограбить {hero2}, но украл лишь дырявый носок!',
+		'{hero1} вытащил кошелек у {hero2}, а там только сыр!',
+		'{hero1} напал на {hero2} ради золота, но они заговорились о погоде.'
 	],
-	theft: [
-		'{hero1} украл сыр у {hero2}... и вернул с маслом!',
-		'{hero1} случайно взял носок {hero2}... оказалось, он телепортный!',
-		'{hero1} украл меч {hero2}... который был ложкой.',
-		'{hero1} позаимствовал золото {hero2}... и оставил расписку.'
+	chat: [
+		'{hero1} и {hero2} обсудили последние сплетни о грязевых крабах.',
+		'{hero1} пожаловался {hero2} на цены в тавернах.',
+		'{hero1} и {hero2} поделились секретом заварки травяного чая.'
 	],
-	adventure: [
-		'{hero1} и {hero2} вместе нашли говорящий гриб!',
-		'{hero1} с {hero2} открыли таверну для облаков!',
-		'{hero1} и {hero2} станцевали с папоротниками!',
-		'{hero1} помог {hero2} философствовать с лошадью!'
+	brawl: [
+		'{hero1} и {hero2} подрались из-за сладкого рулета!',
+		'{hero1} случайно наступил на ногу {hero2}. Началась великая битва!',
+		'{hero1} назвал {hero2} молочным пьющим. Развязалась потасовка в грязи.'
 	],
-	mention: [
-		'{hero1} упомянул {hero2} в разговоре с ковром-торговцем!',
-		'{hero1} рассказал дракону историю о подвигах {hero2}!',
-		'{hero1} написал балладу о {hero2} (рифмы не сошлись)!',
-		'{hero1} нарисовал портрет {hero2} на облаке!'
-	],
-	absurd: [
-		'{hero1} и {hero2} одновременно превратились в сыр!',
-		'{hero1} случайно призвал {hero2} вместо дракона!',
-		'{hero1} и {hero2} обменялись носками... в разных измерениях!',
-		'{hero1} встретил будущую версию {hero2} из прошлого!'
+	comedy: [
+		'{hero1} попытался напугать {hero2}, но поскользнулся на банановой кожуре!',
+		'{hero1} и {hero2} одновременно сказали одно и то же и теперь обязаны купить друг другу эль.',
+		'{hero1} чихнул, и {hero2} подумал, что это боевой клич дракона.'
 	]
 };
 
@@ -40,22 +33,47 @@ const encounterTemplates = {
  * Сгенерировать случайную встречу между героями
  */
 export async function generateRandomEncounter(heroId: number) {
-	// Получаем случайного другого героя
+	// Ищем текущего героя
+	const currentHero = await db.query.heroes.findFirst({
+		where: eq(heroes.id, heroId)
+	});
+
+	if (!currentHero || !currentHero.currentLocation) return null;
+
+	// Получаем других героев в той же локации
 	const otherHeroes = await db.query.heroes.findMany({
-		where: ne(heroes.id, heroId),
+		where: and(
+			ne(heroes.id, heroId),
+			eq(heroes.currentLocation, currentHero.currentLocation)
+		),
 		limit: 10
 	});
 	
 	if (otherHeroes.length === 0) {
-		return null; // Нет других героев
+		return null; // Нет других героев в локации
 	}
 	
 	const randomHero = otherHeroes[Math.floor(Math.random() * otherHeroes.length)];
-	const currentHero = await db.query.heroes.findFirst({
-		where: ne(heroes.id, heroId)
+
+	// Проверяем, встречались ли они уже в течение последнего часа (колдаун)
+	const recentEncounter = await db.query.heroEncounters.findFirst({
+		where: and(
+			or(
+				and(eq(heroEncounters.hero1Id, heroId), eq(heroEncounters.hero2Id, randomHero.id)),
+				and(eq(heroEncounters.hero1Id, randomHero.id), eq(heroEncounters.hero2Id, heroId))
+			)
+		),
+		orderBy: [desc(heroEncounters.timestamp)]
 	});
-	
-	if (!currentHero) return null;
+
+	if (recentEncounter) {
+		const encounterTime = new Date(recentEncounter.timestamp).getTime();
+		const now = new Date().getTime();
+		if (now - encounterTime < 60 * 60 * 1000) {
+			// Skip - уже встречались за последний час
+			return null;
+		}
+	}
 	
 	// Выбираем случайный тип встречи
 	const types = Object.keys(encounterTemplates) as Array<keyof typeof encounterTemplates>;
@@ -78,6 +96,10 @@ export async function generateRandomEncounter(heroId: number) {
 		description: description
 	}).returning();
 	
+	// Отправляем уведомления обоим героям по SSE
+	await publishEventToHero(heroId, { type: 'encounter', encounter });
+	await publishEventToHero(randomHero.id, { type: 'encounter', encounter });
+
 	return encounter;
 }
 
