@@ -129,7 +129,7 @@
 	<!-- Кнопки действий -->
 	<div class="grid grid-cols-2 gap-3 mb-4 relative z-10">
 		<button
-			class="btn py-3 transition-all relative"
+			class="btn py-2 px-1 flex flex-col items-center justify-center transition-all relative"
 			class:btn-interactive={currentPrayer >= 30 && cooldown === 0}
 			class:opacity-50={currentPrayer < 30 || cooldown > 0}
 			class:bg-success={blessing}
@@ -138,13 +138,12 @@
 			disabled={currentPrayer < 30 || cooldown > 0}
 			style="z-index: 20;"
 		>
-			<div class="text-2xl mb-1">✨</div>
-			<div class="text-xs font-medium">Благословить</div>
-			<div class="text-xs mt-1" class:text-text-muted={!blessing} class:text-bg-primary={blessing}>(-30%)</div>
+			<div class="text-[10px] font-medium uppercase tracking-wider">Благословить</div>
+			<div class="text-[9px] mt-0.5 opacity-80" class:text-text-muted={!blessing} class:text-bg-primary={blessing}>(-30%)</div>
 		</button>
 		
 		<button
-			class="btn py-3 transition-all relative"
+			class="btn py-2 px-1 flex flex-col items-center justify-center transition-all relative"
 			class:btn-interactive={currentPrayer >= 30 && cooldown === 0}
 			class:opacity-50={currentPrayer < 30 || cooldown > 0}
 			class:bg-danger={punishment}
@@ -153,9 +152,8 @@
 			disabled={currentPrayer < 30 || cooldown > 0}
 			style="z-index: 20;"
 		>
-			<div class="text-2xl mb-1">⚡</div>
-			<div class="text-xs font-medium">Наказать</div>
-			<div class="text-xs mt-1" class:text-text-muted={!punishment} class:text-bg-primary={punishment}>(-30%)</div>
+			<div class="text-[10px] font-medium uppercase tracking-wider">Наказать</div>
+			<div class="text-[9px] mt-0.5 opacity-80" class:text-text-muted={!punishment} class:text-bg-primary={punishment}>(-30%)</div>
 		</button>
 	</div>
 	
